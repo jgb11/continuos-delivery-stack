@@ -1,0 +1,87 @@
+version: "2"
+
+services:
+  nexus: 
+    image: clearent/nexus
+    volumes:
+      - /opt/data/nexus:/nexus-data
+    ports:
+      - 8081:8081
+
+  jenkins:
+    image: palmapps/jenkins:1.0.2
+    volumes: 
+      - /opt/data/jenkins:/var/jenkins_home
+    ports:
+      - 8080:8080
+      - 50000:50000  
+  
+  redis:
+    image: sameersbn/redis:latest
+    volumes:
+      - /opt/data/gitlab/redis:/var/lib/redis
+  
+  postgresql:
+    image: sameersbn/postgresql:9.6-1
+    environment:
+      - DEBUG=true
+      - DB_USER=gitlab
+      - DB_PASS=password
+      - DB_NAME=gitlabhq_production
+      - DB_EXTENSION=pg_trgm
+      - PG_TRUST_LOCALNET=true
+    volumes:
+      - /opt/data/gitlab/postgresql:/var/lib/postgresql
+    ports:
+      - "15432:5432"        
+  
+  gitlab:
+    image: sameersbn/gitlab:8.15.4
+    depends_on:
+      - redis
+      - postgresql
+    ports:
+      - "8082:80"
+      - "8022:22"
+    environment:
+      - DEBUG=true
+      - TZ=Europe/Berlin
+      - GITLAB_TIMEZONE=Berlin
+      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string 
+      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alpha-numeric-string
+      - GITLAB_HOST=localhost
+      - GITLAB_PORT=8082
+      - GITLAB_SSH_PORT=8022
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=password
+      - DB_NAME=gitlabhq_production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GITLAB_NOTIFY_ON_BROKEN_BUILDS=true
+      - GITLAB_NOTIFY_PUSHER=false
+      - GITLAB_EMAIL=notifications@example.com
+      - GITLAB_EMAIL_REPLY_TO=noreply@example.com
+      - GITLAB_INCOMING_EMAIL_ADDRESS=reply@example.com
+      - GITLAB_BACKUPS=daily
+      - GITLAB_BACKUP_TIME=01:00
+      - SMTP_ENABLED=false
+      - SMTP_DOMAIN=www.example.com
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=mailer@example.com
+      - SMTP_PASS=password
+      - SMTP_STARTTLS=true
+      - SMTP_AUTHENTICATION=login
+      - IMAP_ENABLED=false
+      - IMAP_HOST=imap.gmail.com
+      - IMAP_PORT=993
+      - IMAP_USER=mailer@example.com
+      - IMAP_PASS=password
+      - IMAP_SSL=true
+      - IMAP_STARTTLS=false
+    volumes:
+      - /opt/data/gitlab/gitlab:/home/git/data
