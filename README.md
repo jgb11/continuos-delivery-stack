@@ -19,10 +19,12 @@
 - GitLab can be reached at: localhost:8082 user:root/admin123
 
 ## Docker Compose
+
 - ```docker compose up -d``` :: create stack running docker-compose file
 - ```docker compose down``` :: turn down stack containers, data is stored in host directories
 
 ## Docker Jenkins
+
 Sample default Jenkins 
 - ```cd /docker-jenkins```
 - ```./build-jenkins.sh```
