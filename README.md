@@ -18,12 +18,12 @@
 - Jenkins can be readched at: localhost:8080 user:admin/admin123
 - GitLab can be reached at: localhost:8082 user:root/admin123
 
-## Docker Compose
+## Docker Compose
 
 - ```docker compose up -d``` :: create stack running docker-compose file
 - ```docker compose down``` :: turn down stack containers, data is stored in host directories
 
-## Docker Jenkins
+## Docker Jenkins
 
 Sample default Jenkins 
 - ```cd /docker-jenkins```
